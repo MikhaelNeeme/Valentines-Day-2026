@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Be My Valentine ❤️</title>
+
+  <style>
+    :root {
+      --primary: #ff4d6d;
+      --bg-gradient: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-gradient);
+      overflow: hidden; /* Prevents scrolling when button moves */
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto; /* Allows scrolling if content is too tall */
+    }
+
+    .content-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+      z-index: 10;
+      flex-direction: column; /* Default: Stack for Mobile */
+    }
+
+    /* Desktop View */
+    @media (min-width: 768px) {
+      .content-wrapper {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+
+    /* Memories (Photos) Section */
+    .memories-container {
+      display: flex;
+      flex-direction: row; /* Side by side on mobile */
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    @media (min-width: 768px) {
+      .memories-container {
+        flex-direction: column;
+        gap: 2rem;
+        margin-bottom: 0;
+      }
+    }
+
+    .memory-item {
+      background: white;
+      padding: 8px 8px 20px 8px; 
+      border-radius: 4px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transform: rotate(-3deg);
+      text-align: center;
+      width: 130px; /* Slightly smaller for safety on small phones */
+    }
+
+    .memory-item:nth-child(2) {
+      transform: rotate(3deg);
+      margin-top: 10px;
+    }
+
+    .memory-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 2px;
+      display: block;
+    }
+
+    .disclaimer {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.6rem;
+      color: #555;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+    }
+
+    /* Main Question Card */
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      max-width: 400px;
+      width: 100%;
+      backdrop-filter: blur(5px);
+    }
+
+    h1 {
+      color: var(--primary);
+      margin-top: 0;
+      font-size: 1.8rem; /* Adjusted for mobile */
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      position: relative;
+    }
+
+    button {
+      font-size: 1rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      -webkit-tap-highlight-color: transparent;
+      z-index: 100; /* Ensure buttons are clickable */
+    }
+
+    .yes {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+    }
+
+    .no {
+      background: #f1f1f1;
+      color: #666;
+    }
+
+    /* Floating Hearts */
+    .heart-float {
+      position: fixed;
+      width: 80px; /* Smaller hearts for mobile */
+      height: 80px;
+      pointer-events: none;
+      z-index: 9999;
+      animation: floatUp ease-in forwards;
+      -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>");
+      mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>");
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      mask-size: contain;
+    }
+
+    .heart-float img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(-120vh) scale(1.2) rotate(20deg); opacity: 0; }
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(-100%);
+      transition: transform 1.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 1s ease;
+      z-index: 100;
+    }
+    
+    #overlay h1 {
+      color: white;
+      font-size: 2rem;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    /* Result View */
+    #locked-page {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 600px;
+      z-index: 50;
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #countdown-timer {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin: 20px 0;
+      word-wrap: break-word; /* Prevents overflow on tiny screens */
+    }
+
+    #love-letter {
+      display: none;
+      text-align: left;
+      font-size: 1rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="main-view">
+    <div class="content-wrapper">
+      
+      <div class="memories-container">
+        <div class="memory-item">
+          <img src="Images/memories/2024_moment.gif" alt="2024 Memory">
+          <span class="disclaimer">*valentines 2024</span>
+        </div>
+        <div class="memory-item">
+          <img src="Images/memories/2025_moment.jpeg" alt="2025 Memory">
+          <span class="disclaimer">*valentines 2025</span>
+        </div>
+      </div>
+
+      <div class="card" id="question-card">
+        <h1>Hey my love (Sinae)</h1>
+        <p>Will you be my Valentine?</p>
+        <div class="buttons">
+          <button class="yes">Yes</button>
+          <button class="no">No</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="overlay">
+    <h1>YAAAAAY! you made the right choice my love!</h1>
+  </div>
+
+  <div class="container" id="result-view" style="display: none;">
+    <div id="locked-page">
+      <div class="glass-panel">
+        <div id="countdown-section">
+          <h2>Your valentines day paragraph unlocks in:</h2>
+          <div id="countdown-timer">00:00:00:00</div>
+          <p>Be sure to come back on Valentine's Day! </p>
+        </div>
+
+        <div id="love-letter">
+          <h2>To my favorite person,</h2>
+          <p>
+Hi sinae, You made the right choice! 
+
+Since you are reading this, it's finally Valentine's Day. I just wanted to say how lucky I am to have you. Thank you for letting me be your valentine for the fourth year in a row! I wish we were spending this day together in person, but its alright. You wouldve hopefully recieved to flowers I sent by now so its like im basically right their with you!
+
+I hope today reminds you of how appreciated you are, and that you get to enjoy a day full of happiness.
+
+I love thinking about all the moments we’ve shared, alot of the memories ive made with you make me smile and reminds me how lucky Ive been to have you and even though youre just reading from a screen right now, i hope this will be a memorable valentines day. I hope you liked the website!
+
+Anyway, i just wanted to tell you i hope you have the best valentines day ever despite the distance.
+
+Love,
+Mikhael
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  /* --- CONFIGURATION --- */
+  const TARGET_DATE = new Date("February 14, 2026 00:00:00").getTime();
+  
+  const PHOTOS = [
+    'images/photos/val_phot5.jpeg',
+    'images/photos/val_phot4.jpeg',
+    'images/photos/val_phot3.jpeg',
+    'images/photos/val_phot2.jpeg',
+    'images/photos/val_phot1.jpeg'
+  ];
+
+  /* --- ELEMENTS --- */
+  const yesButton = document.querySelector('.yes');
+  const noButton = document.querySelector('.no');
+  const mainView = document.querySelector('#main-view');
+  const resultView = document.querySelector('#result-view');
+  const overlay = document.querySelector('#overlay');
+  const lockedPage = document.querySelector('#locked-page');
+  const countdownSection = document.querySelector('#countdown-section');
+  const loveLetter = document.querySelector('#love-letter');
+
+  /* --- MOBILE SAFE "NO" BUTTON LOGIC --- */
+  function moveButton(e) {
+    if(e) e.preventDefault();
+
+    // Get current screen dimensions
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const btnW = noButton.offsetWidth;
+    const btnH = noButton.offsetHeight;
+
+    // Calculate a random position anywhere within the screen view
+    // (Subtracting button size so it doesn't go off edge)
+    const newX = Math.random() * (width - btnW - 20);
+    const newY = Math.random() * (height - btnH - 20);
+
+    // Apply Fixed Position so it moves absolutely
+    noButton.style.position = 'fixed';
+    noButton.style.left = newX + 'px';
+    noButton.style.top = newY + 'px';
+    noButton.style.transform = 'none'; // Clear any previous transforms
+  }
+
+  // Event Listeners for Touch and Mouse
+  noButton.addEventListener('click', moveButton);
+  noButton.addEventListener('touchstart', moveButton);
+  noButton.addEventListener('mouseover', moveButton);
+
+  /* --- YES BUTTON LOGIC --- */
+  yesButton.addEventListener('click', () => {
+    sendNotification();
+    
+    spawnHearts(30);
+
+    // Wait 2 seconds before sliding
+    setTimeout(() => {
+      overlay.style.transform = 'translateY(0)'; 
+    }, 2000);
+
+    // Wait 6 seconds total
+    setTimeout(() => {
+      mainView.style.display = 'none';
+      resultView.style.display = 'flex';
+      lockedPage.style.display = 'flex';
+      checkTimer();
+      
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.style.display = 'none', 1000);
+    }, 6000);
+  });
+
+  /* --- HEARTS --- */
+  function spawnHearts(count) {
+    for (let i = 0; i < count; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart-float';
+
+      const img = document.createElement('img');
+      img.src = PHOTOS[Math.floor(Math.random() * PHOTOS.length)];
+      heart.appendChild(img);
+
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.bottom = '-10vh'; 
+      heart.style.animationDuration = (Math.random() * 3 + 6) + 's'; 
+      heart.style.animationDelay = Math.random() * 1 + 's';
+
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 9000);
+    }
+  }
+
+  function sendNotification() {
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1467743613487419518/w1dja80OrWE2tyqGJbUS7Ml44pC9Xh0dQ3zSGh3Y6a5R_fa4akCapwuLuXT37bQ6qlu7"; 
+    if (!WEBHOOK_URL) return;
+    fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: "🚨 SHE SAID YES! Mission Accomplished. 💍" })
+    }).catch(err => console.error("Notification failed", err));
+  }
+
+  /* --- TIMER --- */
+  function checkTimer() {
+    const timerElement = document.getElementById('countdown-timer');
+    const update = () => {
+      const now = new Date().getTime();
+      const distance = TARGET_DATE - now;
+
+      if (distance < 0) {
+        countdownSection.style.display = 'none';
+        loveLetter.style.display = 'block';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      requestAnimationFrame(update);
+    };
+    update();
+  }
+</script>
+</body>
+</html>
